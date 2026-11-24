@@ -150,8 +150,15 @@ class CppConfigurationProvider implements cppTools.CustomConfigurationProvider {
 
     /** Dispose all disposable resources */
     dispose(): void {
+        // Guard against re-entry: cppApi.dispose() triggers cpptools to call back into this
+        // dispose() via its provider wrapper, which would cause infinite mutual recursion.
+        if (this.#isDisposed) {
+            return;
+        }
+        this.#isDisposed = true;
         this.#cppApi?.dispose();
     }
+    #isDisposed = false;
 
     /**
      * Version of Cpptools API

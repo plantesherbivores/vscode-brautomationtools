@@ -13,6 +13,11 @@ Users can look forward to these changes for the next release 😀😉
 
 ### Fixed
 
+-   Fixed a `RangeError: Maximum call stack size exceeded` which was thrown on every window reload.
+    The C/C++ extension (cpptools >= 1.35) calls back into the provider's `dispose()` when disposing its provider wrapper.
+    Together with our `dispose()` calling `cppApi.dispose()`, this caused infinite mutual recursion and crashed the extension host on reload.
+    A re-entry guard now breaks the cycle.
+
 -   On slower machines it was possible, that we didn't provide information to the C/C++ extension with correct timing.
     In that case the IntelliSense was not working correctly for already opened files when opening a workspace.
     [#66](https://github.com/br-automation-com/vscode-brautomationtools/issues/66)
