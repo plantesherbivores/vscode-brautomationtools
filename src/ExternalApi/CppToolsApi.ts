@@ -120,26 +120,32 @@ class CppConfigurationProvider implements cppTools.CustomConfigurationProvider {
      * @param uri The uri to get the configuration from
      */
     private async _getConfiguration(uri: vscode.Uri): Promise<cppTools.SourceFileConfigurationItem | undefined> {
-        // get build info from AS project API
-        const buildInfo = await WorkspaceProjects.getCBuildInformationForUri(uri);
-        if (buildInfo === undefined) {
+        try {
+            // get build info from AS project API
+            const buildInfo = await WorkspaceProjects.getCBuildInformationForUri(uri);
+            if (buildInfo === undefined) {
+                logger.debug("CppConfigurationProvider._getConfiguration -> no build info", { uri: uri.toString(true) });
+                return undefined;
+            }
+            // create and return C/C++ configuration
+            const headerUris: vscode.Uri[] = [...buildInfo.systemIncludes, ...buildInfo.userIncludes];
+            const headerPaths = headerUris.map((u) => u.fsPath);
+            const config: cppTools.SourceFileConfigurationItem = {
+                uri: uri,
+                configuration: {
+                    includePath: headerPaths,
+                    defines: [],
+                    intelliSenseMode: undefined,
+                    standard: undefined,
+                    compilerArgs: buildInfo.buildOptions,
+                    compilerPath: buildInfo.compilerPath?.fsPath,
+                },
+            };
+            return config;
+        } catch (error) {
+            logger.error(`Failed to create C/C++ configuration for ${logger.formatUri(uri)}. ${logger.formatError(error)}`);
             return undefined;
         }
-        // create and return C/C++ configuration
-        const headerUris: vscode.Uri[] = [...buildInfo.systemIncludes, ...buildInfo.userIncludes];
-        const headerPaths = headerUris.map((u) => u.fsPath);
-        const config: cppTools.SourceFileConfigurationItem = {
-            uri: uri,
-            configuration: {
-                includePath: headerPaths,
-                defines: [],
-                intelliSenseMode: undefined,
-                standard: undefined,
-                compilerArgs: buildInfo.buildOptions,
-                compilerPath: buildInfo.compilerPath?.fsPath,
-            },
-        };
-        return config;
     }
 
     /** Dispose all disposable resources */
