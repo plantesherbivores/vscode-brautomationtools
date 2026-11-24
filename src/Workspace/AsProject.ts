@@ -264,6 +264,18 @@ export class AsProject implements vscode.Disposable {
                 return mergeAsProjectCBuildInfo(iecBuildInfo, this.activeConfiguration?.cBuildInfoGlobals);
             }
 
+            case "library": {
+                // AS automatically defines _REPLACE_CONST when building libraries, so constants declared in
+                // IEC files are used as macros in the generated headers (AS help d28cc53c-b56b-4a3a-aa49-6de03217994f)
+                const libraryBuildInfo: AsProjectCBuildInfo = {
+                    compilerPath: undefined,
+                    systemIncludes: [],
+                    userIncludes: [],
+                    buildOptions: ["-D", "_REPLACE_CONST"],
+                };
+                return libraryBuildInfo;
+            }
+
             default:
                 // no special POU includes for other POU types
                 return undefined;
