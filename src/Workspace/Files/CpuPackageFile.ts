@@ -109,7 +109,8 @@ function getCpuConfiguration(rootElement: ParsedXmlObject): CpuConfiguration {
     if (typeof configElement !== "object" || configElement === null) {
         throw new Error("No <Configuration> element found");
     }
-    const cpuModuleId = configElement?._att?.ModuleId as unknown;
+    // AS versions write the attribute with different casing, e.g. AS V4.12 uses "ModuleID"
+    const cpuModuleId = (configElement?._att?.ModuleId ?? configElement?._att?.ModuleID) as unknown;
     // Get properties from <AutomationRuntime> element
     const arVersion = configElement?.AutomationRuntime?._att?.Version as unknown;
     // Get properties from <Build> element
