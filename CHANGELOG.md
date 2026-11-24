@@ -13,6 +13,8 @@ Users can look forward to these changes for the next release 😀😉
 
 ### Fixed
 
+-   Fixed the name generation of `BrAsBuild` tasks. The `as simulation` suffix was added when the task was NOT built for simulation and vice versa, so the shown task name did not match the actual build behavior.
+
 -   Fixed a `RangeError: Maximum call stack size exceeded` which was thrown on every window reload.
     The C/C++ extension (cpptools >= 1.35) calls back into the provider's `dispose()` when disposing its provider wrapper.
     Together with our `dispose()` calling `cppApi.dispose()`, this caused infinite mutual recursion and crashed the extension host on reload.

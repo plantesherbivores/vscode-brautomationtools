@@ -195,7 +195,7 @@ class BrAsBuildTaskProvider implements vscode.TaskProvider {
         if (definition.asConfiguration !== undefined) {
             nameContents.push(`for configuration: '${definition.asConfiguration}'`);
         }
-        if (definition.buildForSimulation !== true) {
+        if (definition.buildForSimulation === true) {
             nameContents.push(`as simulation`);
         }
         if (definition.buildRUCPackage === true) {
